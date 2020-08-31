@@ -1,17 +1,148 @@
 {% load static %}
+<html>
 
-{% block content %}
-    {{ad_detail.title}}
-    {{ad_detail.description}}
-    {{ad_detail.author}}
-    {{ad_detail.author.cnumber}}
-    <img src="{{ad_detail.image.url}}" alt="">
-    {% if ad_detail.author == request.user %}
-    <a href="{% url 'edit_ad' ad_detail.slug %}">Update post</a>
-    <form method="POST" action="{% url 'delete_ad' ad_detail.slug %}">
-    {% csrf_token %}
-     <button type="submit"> Delete</button>
-    </form>
-    {% endif %}
-    
-{% endblock content %}
+<head>
+    <title>This is the title</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+        integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+    <style>
+        .card-img {
+            border-radius: 5px 55px;
+            /* width: 284px; */
+            box-shadow: 10px 10px 5px #aaaaaa;
+        }
+
+        .card {
+            margin-top: 10%;
+        }
+
+        h1 {
+            font-style: oblique;
+            font-family: 'Playfair Display', serif;
+        }
+
+        .card-body {
+            margin-top: 10%;
+        }
+
+        .mycard {
+            width: 70%;
+            margin-top: 20%;
+
+        }
+
+        .editable {
+            margin-top: 20%;
+        }
+
+        @media screen and (max-width: 768px) {
+            .mycard {
+                margin-right: auto;
+                margin-left: auto;
+                margin-top: 10%;
+            }
+        }
+
+
+        .share-button {
+            width: fit-content;
+            height: fit-content;
+            background: #dfe6e9;
+            border-radius: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 50px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: .3s linear;
+        }
+
+        .share-button:hover {
+            transform: scale(1.1);
+        }
+
+        .share-button span {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            margin: auto;
+            background: #2d3436;
+            color: #f1f1f1;
+            text-align: center;
+            transition: .6s linear;
+            border-radius: 40px;
+
+        }
+
+        .share-button:hover span {
+            transform: translateX(-100%);
+            transition-delay: .3s;
+        }
+
+        .share-button p {
+            flex: 1;
+            color: #2d3436;
+            text-align: center;
+            margin: auto;
+            transform: translateX(-100%);
+            opacity: 0;
+            transition: .3s linear;
+        }
+
+        .share-button:hover p {
+            opacity: 1;
+            transform: translateX(0);
+            transition-delay: 0.7s;
+        }
+    </style>
+</head>
+
+<body class="container-fluid">
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <a class="navbar-brand" href="#">LOGO</a>
+    </nav>
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <div class="card border-0">
+                <div class="card-block">
+                    <div class="card-title">
+                        <h1>{{ad_detail.title}}</h1>
+                    </div>
+                </div>
+                <img src="{{ad_detail.image.url}}" alt="" class="card-img" />
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card mycard border-0">
+                <div class="card-body">
+                    <p>{{ad_detail.description}}</p>
+                    <p>{{ad_detail.author}}</p>
+                    
+                    <div class="share-button">
+                        <span>Contact</span>
+                        <p>{{ad_detail.author.cnumber}}</p>
+                    </div>
+                </div>
+                
+                {% if ad_detail.author == request.user %}
+                <div class="editable mx-auto">
+                    <form method="POST" action="{% url 'delete_ad' ad_detail.slug %}">
+                        {% csrf_token %}
+                        <a href="{% url 'edit_ad' ad_detail.slug %}" class="btn btn-secondary btn-sm">Update post</a>
+                        <button type="submit" class="btn btn-danger btn-sm">Delete</button>
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>

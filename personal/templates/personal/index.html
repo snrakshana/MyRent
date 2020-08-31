@@ -1,210 +1,236 @@
-{% extends 'personal/base.html' %}
-{% load static %}
-
-
-{% block content %}
-
-<h2>Registered Users</h2>
-<p><a href="{% url 'create_ad' %}">Create Ad</a></p>
-{% for user in users %}
-    {{user.email}}
-    {{user.cnumber}}
-{% endfor %}
-<img src="{% static 'noimage.jpeg' %}" alt="">
-<hr>
-
-{% for ad in ads %}
-    
-    <a href="{% url 'ad_detail' ad.slug %}">{{ad.title}}</a>
-    <img src="{{ad.image.url}}" alt="">
-   
-   {{ad.description}}
-   {{ad.author}}
-   {{ad.author.cnumber}}
-{% endfor %}
-
-
-
-
-
+{% extends 'personal/base.html' %} {% load static %} {% block content %}
 <html>
-    <head>
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
 
-        <style>
-            img{
-            height:500px;
-            width:100%;
-        }
-        a{
+<head>
+    <style>
+        a,
+        a:hover,
+        a:active {
             text-decoration: none;
         }
-        div [class^="col-"]{
-            padding-left:5px;
-            padding-right:5px;
-        }
-        .card{
-            transition:0.5s;
-            cursor:pointer;
-            margin: 5%;
-
-        }
-        .card-block{
-            padding: 5%;
-        }
-
-        .card-title{  
-            font-size:15px;
-            transition:1s;
-            cursor:pointer;
-        }
-        .card-title i{  
-            font-size:15px;
-            transition:1s;
-            cursor:pointer;
-            color:#ffa710
-        }
-        .card-title i:hover{
-            transform: scale(1.25) rotate(100deg); 
-            color:#18d4ca;
-            
-        }
-        .card:hover{
-            transform: scale(1.05);
-            box-shadow: 10px 10px 15px rgba(0,0,0,0.3);
-        }
-        .card-text{
-            height:80px;  
+        
+        img {
+            height: 100%;
+            width: 100%;
+            align-content: center;
         }
         
-        .card::before, .card::after {
+        .carousel-inner {
+            height: 100%;
+            width: 100%;
+        }
+        
+        div [class^="col-"] {
+            padding-left: 2px;
+            padding-right: 2px;
+            margin-bottom: 1.5%;
+        }
+        
+        .card {
+            transition: 0.5s;
+            cursor: pointer;
+            margin: 1%;
+        }
+        
+        .card-block {
+            padding: 1%;
+            width: 90%;
+            height: 100%;
+        }
+        
+        .card-title {
+            font-size: 15px;
+            transition: 1s;
+            cursor: pointer;
+        }
+        
+        .card-title i {
+            font-size: 15px;
+            transition: 1s;
+            cursor: pointer;
+            color: #ffa710;
+        }
+        
+        .card-title i:hover {
+            transform: scale(1.25) rotate(100deg);
+            color: #18d4ca;
+        }
+        
+        .card:hover {
+            transform: scale(1.05);
+            box-shadow: 10px 10px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .card-text {
+            height: 100%;
+        }
+        
+        .card::before,
+        .card::after {
             position: absolute;
             top: 0;
             right: 0;
             bottom: 0;
             left: 0;
             transform: scale3d(0, 0, 1);
-            transition: transform .3s ease-out 0s;
+            transition: transform 0.3s ease-out 0s;
             background: rgba(255, 255, 255, 0.1);
-            content: '';
+            content: "";
             pointer-events: none;
         }
+        
         .card::before {
             transform-origin: left top;
         }
+        
         .card::after {
             transform-origin: right bottom;
         }
-        .card:hover::before, .card:hover::after, .card:focus::before, .card:focus::after {
+        
+        .card:hover::before,
+        .card:hover::after,
+        .card:focus::before,
+        .card:focus::after {
             transform: scale3d(1, 1, 1);
         }
-        </style>
-    </head>
+        
+        #wrapper {
+            overflow-x: scroll;
+        }
+        
+        #sidebar-wrapper {
+            min-height: 100vh;
+            margin-left: -15rem;
+            -webkit-transition: margin 0.25s ease-out;
+            -moz-transition: margin 0.25s ease-out;
+            -o-transition: margin 0.25s ease-out;
+            transition: margin 0.25s ease-out;
+        }
+        
+        #sidebar-wrapper .sidebar-heading {
+            padding: 0.875rem 1.25rem;
+            font-size: 1.2rem;
+        }
+        
+        #sidebar-wrapper .list-group {
+            width: 15rem;
+        }
+        
+        #page-content-wrapper {
+            min-width: 100vw;
+        }
+        
+        #wrapper.toggled #sidebar-wrapper {
+            margin-left: 0;
+        }
+        
+        @media (min-width: 768px) {
+            #sidebar-wrapper {
+                margin-left: 0;
+            }
+            #page-content-wrapper {
+                min-width: 0;
+                width: 100%;
+            }
+            #wrapper.toggled #sidebar-wrapper {
+                margin-left: -15rem;
+            }
+        }
+    </style>
+</head>
 
-    <body>
-
-        <div class="container">
-            <!--   <div class="card card-block mb-2">
+<body>
+    <a href="{% url 'create_ad' %}" class="btn btn-success btn-sm m-3">Create Ad</a>
+    <button class="btn btn-primary" id="menu-toggle">Toggle Menu</button>
+    <div class="container" style="max-width: 80%">
+        <!--   <div class="card card-block mb-2">
                 <h4 class="card-title">Card 1</h4>
                 <p class="card-text">Welcom to bootstrap card styles</p>
                 <a href="#" class="btn btn-primary">Submit</a>
               </div>   -->
-              <div class="row">
-                   
-                    <div class="col-md-3 col-sm-6">
-                     {% for ad in ads %}
-                        <div class="card card-block">
-                            <div class="carousel slide" id="main-carousel" data-ride="carousel">
-                                <ol class="carousel-indicators">
-                                    <li data-target="#main-carousel" data-slide-to="0" class="active"></li>
-                                    <li data-target="#main-carousel" data-slide-to="1"></li>
-                                    <li data-target="#main-carousel" data-slide-to="2"></li>
-                                    <li data-target="#main-carousel" data-slide-to="3"></li>
-                                </ol><!-- /.carousel-indicators -->
-                                
-                                <div class="carousel-inner">
-                                    <div class="carousel-item active">
-                                        <img class="img-fluid" src="{{ad.image.url}}" alt="" height="500px">
-                                    </div>
-                                    
-                                </div><!-- /.carousel-inner -->
-                                
-                                <a href="#main-carousel" class="carousel-control-prev" data-slide="prev">
-                                    <span class="carousel-control-prev-icon"></span>
-                                    <span class="sr-only" aria-hidden="true">Prev</span>
-                                </a>
-                                <a href="#main-carousel" class="carousel-control-next" data-slide="next">
-                                    <span class="carousel-control-next-icon"></span>
-                                    <span class="sr-only" aria-hidden="true">Next</span>
-                                </a>
-                            </div><!-- /.carousel -->
-                            <h5 class="card-title mt-3 mb-3">{{ad.title}}</h5>
-                            <p class="card-text">{{ad.description}}</p> 
-                        </div>
-                        {% endfor %}
-                        
-
-                    </div>
-                </a> 
-              </div>
-              
+        <div class="d-flex" id="wrapper">
+            <!-- Sidebar -->
+            <div class="bg-light border-right" id="sidebar-wrapper">
+                <div class="sidebar-heading">Start Bootstrap</div>
+                <div class="list-group list-group-flush">
+                    <a href="#" class="list-group-item list-group-item-action bg-light">Dashboard</a>
+                    <a href="#" class="list-group-item list-group-item-action bg-light">Shortcuts</a>
+                    <a href="#" class="list-group-item list-group-item-action bg-light">Overview</a>
+                    <a href="#" class="list-group-item list-group-item-action bg-light">Events</a>
+                    <a href="#" class="list-group-item list-group-item-action bg-light">Profile</a>
+                    <a href="#" class="list-group-item list-group-item-action bg-light">Status</a>
+                </div>
             </div>
-            
+            <!-- /#sidebar-wrapper -->
+            <div id="page-content-wrapper">
+                <div class="row">
+                    {% for ad in ads %}
+                    <div class="col-md-3 col-sm-6">
+                        <a href="{% url 'ad_detail' ad.slug %}">
+                            <div class="card card-block">
+                                <!-- <div class="carousel slide" id="main-carousel" data-ride="carousel">
+                                    <ol class="carousel-indicators">
+                                        <li data-target="#main-carousel" data-slide-to="0" class="active"></li>
+                                        <li data-target="#main-carousel" data-slide-to="1"></li>
+                                        <li data-target="#main-carousel" data-slide-to="2"></li>
+                                        <li data-target="#main-carousel" data-slide-to="3"></li>
+                                    </ol>
+                                     /.carousel-indicators 
+                                    <div class="carousel-inner">
+                                        <div class="carousel-item active">
+                                            <img class="img-fluid" src="{{ad.image.url}}" alt="" height="500px" />
+                                        </div>
+                                    </div>
+                                    /.carousel-inner 
+                                    <span data-target="#main-carousel" class="carousel-control-prev" data-slide="prev">
+                                        <span class="carousel-control-prev-icon"></span>
+                                    <span class="sr-only" aria-hidden="true">Prev</span>
+                                    </span>
+                                    <span data-target="#main-carousel" class="carousel-control-next" data-slide="next">
+                                        <span class="carousel-control-next-icon"></span>
+                                    <span class="sr-only" aria-hidden="true">Next</span>
+                                    </span>
+                                </div> -->
+                                <!-- /.carousel -->
+                                <img class="img-fluid" src="{{ad.image.url}}" alt="" height="500px" />
+                                <h5 class="card-title mt-3 mb-3">{{ad.title}}</h5>
+                                <p class="card-text">{{ad.description}}</p>
+                            </div>
+                        </a>
+                    </div>
+                    {% endfor %}
+                </div>
+                <div class="pagination">
+                    <span class="step-links">
+                        {% if ads.has_previous %}
+                        <a href="?page=1">&laquo; first</a>
+                        <a href="?page={{ ads.previous_page_number }}">previous</a>
+                        {% endif %}
 
-            
+                        <span class="current">
+                            Page {{ ads.number }} of {{ ads.paginator.num_pages }}.
+                        </span> {% if ads.has_next %}
+                    <a href="?page={{ ads.next_page_number }}">next</a>
+                    <a href="?page={{ ads.paginator.num_pages }}">last &raquo;</a> {% endif %}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Menu Toggle Script -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $("#menu-toggle").click(function(e) {
+            e.preventDefault();
+            $("#wrapper").toggleClass("toggled");
+        });
+    </script>
 
-<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
-    </body>
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+</body>
+
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 {% endblock content %}

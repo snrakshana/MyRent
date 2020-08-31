@@ -1,7 +1,7 @@
 <form action="" method="POST">
 {% csrf_token %}
 
-{{form}}
+{{form.as_p}}
 <button type="submit">Save Changes</button>
 </form>
 
